@@ -178,3 +178,11 @@ nav .lang { border: 1px solid #333; border-radius: 6px; padding: 2px 8px; }
 .mac-links { margin-top: 14px; font-size: 14px; color: #cfcfcf; }
 .mac-links a { color: #fff; }
 .check-row { display: flex; gap: 8px; align-items: center; margin: 14px 0 4px; font-size: 14px; color: #cfcfcf; cursor: pointer; }
+
+/* v0.6: галерея — лайки, топ, конкурс */
+.gtabs { display: flex; gap: 8px; margin-top: 22px; flex-wrap: wrap; }
+.gtabs .btn.on, .like.on { background: #fff; color: #000; border-color: #fff; }
+.gcard .img { position: relative; }
+.gcard .rank { position: absolute; top: 8px; left: 8px; background: #fff; color: #000; font-weight: 800; font-size: 12px; border-radius: 6px; padding: 1px 7px; }
+.gacts { display: flex; gap: 8px; }
+.contest { border: 1px solid #fff; border-radius: 14px; padding: 16px 18px; margin-top: 22px; background: linear-gradient(135deg, #1d1d1d, #0e0e0e); display: flex; flex-direction: column; gap: 4px; }
