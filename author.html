@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Автор модов — GeodeForge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .ahead { display: flex; gap: 18px; align-items: center; margin-bottom: 26px; }
+  .ava { width: 72px; height: 72px; border-radius: 50%; background: #fff; color: #000; display: grid; place-items: center; font: 800 30px Inter, sans-serif; flex: none; }
+  .bdg { display: inline-block; border: 1px solid #333; border-radius: 999px; padding: 2px 10px; font-size: 13px; margin: 6px 6px 0 0; color: #ddd; }
+</style>
+</head>
+<body>
+<main class="wrap" style="max-width:1000px;padding-top:50px;padding-bottom:80px">
+  <a class="brand" href="./" style="margin-bottom:34px">
+    <svg viewBox="0 0 40 40" fill="none" width="26" height="26"><rect x="4.5" y="4.5" width="31" height="31" rx="5" stroke="#fff" stroke-width="1.6"/><rect x="11" y="11" width="18" height="18" rx="2" stroke="#fff" stroke-width="1.6"/><path d="M20 15v10M15 20h10" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>
+    GeodeForge
+  </a>
+  <div id="box"><p class="dim">Загружаю…</p></div>
+</main>
+<script src="config.js"></script>
+<script>
+(async () => {
+  const q = new URLSearchParams(location.search);
+  const EN = q.get("en") === "1";
+  const T = (ru, en) => (EN ? en : ru);
+  if (EN) document.documentElement.lang = "en";
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const BADGE = { mods1: ["🧩", "Первый мод", "First mod"], mods5: ["🛠", "5 модов", "5 mods"], mods10: ["🏗", "10 модов", "10 mods"], likes10: ["❤️", "10 лайков", "10 likes"], likes100: ["🔥", "100 лайков", "100 likes"], winner: ["🏆", "Победитель конкурса", "Contest winner"], seller: ["💰", "Продаёт моды", "Sells mods"] };
+  const box = document.getElementById("box");
+  try {
+    const r = await fetch(GF.api + "/gallery", { method: "POST", headers: { "Content-Type": "application/json", apikey: GF.anon, Authorization: "Bearer " + GF.anon }, body: JSON.stringify({ action: "author", id: q.get("id"), site: true }) });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error);
+    document.title = d.name + " — GeodeForge";
+    box.innerHTML = `
+      <div class="ahead">
+        <div class="ava">${esc(String(d.name).slice(0, 1).toUpperCase())}</div>
+        <div>
+          <h2 style="margin:0">${esc(d.name)}</h2>
+          <div class="dim">${T("Модов", "Mods")}: ${d.mods.length} · ❤ ${d.likes} · ↓ ${d.downloads}</div>
+          <div>${(d.badges || []).filter((b) => BADGE[b]).map((b) => `<span class="bdg">${BADGE[b][0]} ${T(BADGE[b][1], BADGE[b][2])}</span>`).join("")}</div>
+        </div>
+      </div>
+      <div class="gallery">${d.mods.map((m) => `
+        <div class="gcard">
+          <div class="img" style="${m.image ? `background-image:url('${esc(m.image)}')` : ""}">${m.image ? "" : "◆"}</div>
+          <div class="body">
+            <b>${esc(m.title)}</b>
+            <p>${esc(m.description)}</p>
+            <div class="meta">${esc(m.version)} · ❤ ${m.likes} · ↓ ${m.downloads}</div>
+            ${m.price > 0 ? `<a class="btn sm primary" href="./#gallery">${T("Купить", "Buy")} ${m.price} ₽</a>` : `<a class="btn sm" href="${GF.api}/gallery?download=${m.id}">${T("Скачать .geode", "Download .geode")}</a>`}
+          </div>
+        </div>`).join("")}</div>
+      <p class="dim" style="margin-top:30px">${T("Все эти моды сделаны в GeodeForge — с помощью ИИ, без опыта программирования.", "All these mods were made in GeodeForge — with AI, no coding experience needed.")} <a href="./${EN ? "en.html" : ""}">${T("Попробовать бесплатно →", "Try it free →")}</a></p>`;
+  } catch (e) {
+    box.innerHTML = `<p class="dim">${T("Автор не найден.", "Author not found.")}</p>`;
+  }
+})();
+</script>
+</body>
+</html>
