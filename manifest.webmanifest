@@ -1,0 +1,11 @@
+{
+  "name": "GeodeForge",
+  "short_name": "GeodeForge",
+  "description": "Моды для Geometry Dash с ИИ — твои сборки на телефоне",
+  "start_url": "m.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [{ "src": "assets/icon.png", "sizes": "128x128", "type": "image/png" }, { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png" }]
+}
