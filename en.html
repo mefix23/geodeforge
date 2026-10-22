@@ -138,7 +138,7 @@
           <button class="btn primary" data-plan="pro">Buy Pro</button>
         </div>
       </div>
-      <p class="upgrade-note">Already have Basic? <a href="#" data-plan="upgrade">Upgrade to Pro for <span id="amt-upgrade">200</span> ₽</a> · <a href="#" data-plan="pro" data-gift="1">🎁 Gift to a friend</a></p>
+      <p class="upgrade-note">Already have Basic? <a href="#" data-plan="upgrade">Upgrade to Pro for <span id="amt-upgrade">200</span> ₽</a> · <a href="#" data-plan="pro" data-gift="1">🎁 Gift to a friend</a> · <a href="#" data-plan="sub">📅 Pro for a month — <span id="amt-sub">149</span> ₽</a></p>
     </div>
   </section>
 
@@ -156,7 +156,7 @@
       <h2>Mods made with GeodeForge</h2>
       <p class="sub">Made by users — with words, without programming. Download and install via Geode (Geode → “Install from file”).</p>
       <div id="contest" class="contest" hidden></div>
-      <div class="gtabs"><button class="btn sm on" data-gsort="top">Best</button><button class="btn sm" data-gsort="week">Top of the week</button><button class="btn sm" data-gsort="new">New</button></div>
+      <div class="gtabs"><button class="btn sm on" data-gsort="top">Best</button><button class="btn sm" data-gsort="week">Top of the week</button><button class="btn sm" data-gsort="new">New</button><button class="btn sm" data-gsort="shop">Shop</button></div>
       <div class="gallery" id="gallery-list"><div class="dim">Empty for now — be the first! In the app: Build → Publishing → “To gallery”.</div></div>
     </div>
   </section>
@@ -207,8 +207,8 @@
     <div class="dim" id="m-sub" style="font-size:14px"></div>
     <label class="l" for="email" id="m-email-label">Email — the key will be sent here</label>
     <input class="input" id="email" type="email" required placeholder="you@gmail.com" autocomplete="email">
-    <label class="l" for="promo">Promo code <span class="dim">(if any)</span></label>
-    <input class="input mono" id="promo" placeholder="GD20" autocomplete="off" style="text-transform:uppercase">
+    <label class="l promo-l" for="promo">Promo code <span class="dim">(if any)</span></label>
+    <input class="input mono promo-l" id="promo" placeholder="GD20" autocomplete="off" style="text-transform:uppercase">
     <div class="promo-msg" id="promo-msg"></div>
     <label class="check-row"><input type="checkbox" id="gift"> 🎁 It’s a gift — send the key to a friend</label>
     <div id="gift-fields" hidden>
