@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GeodeForge Mobile</title>
+<meta name="theme-color" content="#0a0a0a">
+<meta name="robots" content="noindex">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="assets/icon.png">
+<link rel="apple-touch-icon" href="assets/icon.png">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
+  .m { max-width: 520px; margin: 0 auto; padding: 22px 16px 60px; }
+  .m h1 { font-size: 26px; margin: 18px 0 6px; }
+  .m .card { border: 1px solid #262626; border-radius: 14px; background: #111; padding: 16px; margin-top: 14px; }
+  .m .input { width: 100%; margin-bottom: 10px; }
+  .m .btn { width: 100%; }
+  .b { display: flex; gap: 12px; align-items: center; padding: 14px 0; border-bottom: 1px solid #222; }
+  .b:last-child { border: none; }
+  .b .t { flex: 1; min-width: 0; }
+  .b .t b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .b .t span { font-size: 12.5px; color: #8a8a8a; }
+  .b .btn { width: auto; }
+  .err { color: #ff6b6b; font-size: 13.5px; min-height: 18px; }
+  .help { font-size: 13.5px; color: #a9a9a9; line-height: 1.7; }
+  .top { display: flex; align-items: center; gap: 10px; }
+  .top .grow { flex: 1; }
+</style>
+</head>
+<body>
+<div class="m">
+  <div class="top">
+    <img src="assets/icon.png" width="32" height="32" alt="" style="border-radius:8px">
+    <b class="grow">GeodeForge</b>
+    <a href="#" id="out" class="dim" hidden></a>
+  </div>
+
+  <div id="login">
+    <h1 data-ru="Мои моды на телефоне" data-en="My mods on your phone"></h1>
+    <p class="dim" data-ru="Войди той же почтой и паролем, что и в программе. Здесь будут твои облачные сборки — скачай .geode и поставь через Geode на Android." data-en="Sign in with the same email and password as in the app. Your cloud builds appear here — download a .geode and install it with Geode on Android."></p>
+    <form class="card" id="form">
+      <input class="input" id="email" type="email" required autocomplete="email" placeholder="email">
+      <input class="input" id="pass" type="password" required autocomplete="current-password" data-ph-ru="Пароль" data-ph-en="Password">
+      <div class="err" id="err"></div>
+      <button class="btn primary" id="go" data-ru="Войти" data-en="Sign in"></button>
+    </form>
+    <p class="help" data-ru="Вход здесь не выкидывает программу на компьютере." data-en="Signing in here doesn't sign you out on your computer."></p>
+  </div>
+
+  <div id="app" hidden>
+    <h1 data-ru="Мои сборки" data-en="My builds"></h1>
+    <p class="dim" id="who"></p>
+    <div class="card" id="list"></div>
+    <button class="btn" style="margin-top:14px" id="reload" data-ru="Обновить" data-en="Refresh"></button>
+    <div class="card help">
+      <b data-ru="Как поставить мод на Android" data-en="How to install a mod on Android"></b><br>
+      <span data-ru="1. Скачай .geode кнопкой выше (собирай с галочкой «+ Android» в программе)." data-en="1. Download the .geode with the button above (build with “+ Android” enabled in the app)."></span><br>
+      <span data-ru="2. Открой Geometry Dash → Geode → «Установить из файла» и выбери скачанный файл." data-en="2. Open Geometry Dash → Geode → “Install from file” and pick the downloaded file."></span><br>
+      <span data-ru="3. Перезапусти игру." data-en="3. Restart the game."></span><br><br>
+      <span data-ru="Совет: привяжи Telegram в программе (Профиль) — бот будет сам присылать каждый готовый мод." data-en="Tip: link Telegram in the app (Profile) — the bot will send every finished mod automatically."></span>
+    </div>
+  </div>
+</div>
+<script src="config.js"></script>
+<script>
+(() => {
+  const EN = !/^ru|^uk|^be|^kk/i.test(navigator.language || "ru");
+  document.documentElement.lang = EN ? "en" : "ru";
+  document.querySelectorAll("[data-ru]").forEach((e) => (e.textContent = EN ? e.dataset.en : e.dataset.ru));
+  document.querySelectorAll("[data-ph-ru]").forEach((e) => (e.placeholder = EN ? e.dataset.phEn : e.dataset.phRu));
+  const T = (ru, en) => (EN ? en : ru);
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const AUTH = GF.api.replace("/functions/v1", "/auth/v1");
+  try { fetch(GF.api + "/track", { method: "POST", headers: { "Content-Type": "application/json", apikey: GF.anon, Authorization: "Bearer " + GF.anon }, body: JSON.stringify({ kind: "mobile_visit" }) }).catch(() => {}); } catch {}
+
+  let sess = null;
+  try { sess = JSON.parse(localStorage.getItem("gf-m") || "null"); } catch {}
+  const save = (s) => { sess = s; try { s ? localStorage.setItem("gf-m", JSON.stringify(s)) : localStorage.removeItem("gf-m"); } catch {} };
+
+  async function token() {
+    if (!sess) return null;
+    if (Date.now() / 1000 < sess.expires_at - 60) return sess.access_token;
+    const r = await fetch(AUTH + "/token?grant_type=refresh_token", { method: "POST", headers: { "Content-Type": "application/json", apikey: GF.anon }, body: JSON.stringify({ refresh_token: sess.refresh_token }) });
+    if (!r.ok) { save(null); return null; }
+    save(await r.json());
+    return sess.access_token;
+  }
+
+  async function load() {
+    const t = await token();
+    if (!t) return show(false);
+    show(true);
+    $("#list").innerHTML = `<div class="dim">${T("Загружаю…", "Loading…")}</div>`;
+    const r = await fetch(GF.api + "/my-builds", { method: "POST", headers: { "Content-Type": "application/json", apikey: GF.anon, Authorization: "Bearer " + t }, body: "{}" });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { $("#list").innerHTML = `<div class="err">${esc(j.error || r.status)}</div>`; return; }
+    $("#who").textContent = j.email;
+    if (!j.items.length) { $("#list").innerHTML = `<div class="dim">${T("За последние 2 недели сборок не было. Собери мод в программе — он появится здесь.", "No builds in the last 2 weeks. Build a mod in the app — it will show up here.")}</div>`; return; }
+    $("#list").innerHTML = j.items.map((b) => {
+      const plats = String(b.platforms || "Win64").includes("Android") ? "Windows + Android" : "Windows";
+      const when = new Date(b.created_at).toLocaleString(EN ? "en-GB" : "ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+      const st = b.status === "success" ? "✓" : b.status === "failed" ? T("✕ ошибка", "✕ failed") : T("… собирается", "… building");
+      return `<div class="b"><div class="t"><b>${esc(b.project || "mod")}</b><span>${when} · ${plats} · ${st}</span></div>${b.url ? `<a class="btn sm primary" href="${esc(b.url)}">${T("Скачать", "Download")}</a>` : ""}</div>`;
+    }).join("");
+  }
+
+  function show(inside) {
+    $("#login").hidden = inside;
+    $("#app").hidden = !inside;
+    $("#out").hidden = !inside;
+    $("#out").textContent = T("Выйти", "Sign out");
+  }
+
+  $("#form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    $("#err").textContent = "";
+    $("#go").disabled = true;
+    try {
+      const r = await fetch(AUTH + "/token?grant_type=password", { method: "POST", headers: { "Content-Type": "application/json", apikey: GF.anon }, body: JSON.stringify({ email: $("#email").value.trim(), password: $("#pass").value }) });
+      const j = await r.json();
+      if (!r.ok) throw new Error(/Invalid login/i.test(j.error_description || j.msg || "") ? T("Неверная почта или пароль", "Wrong email or password") : j.error_description || j.msg || "Error");
+      save(j);
+      $("#pass").value = "";
+      load();
+    } catch (er) {
+      $("#err").textContent = er.message;
+    }
+    $("#go").disabled = false;
+  });
+  $("#out").addEventListener("click", (e) => { e.preventDefault(); save(null); show(false); });
+  $("#reload").addEventListener("click", load);
+  load();
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+})();
+</script>
+</body>
+</html>
