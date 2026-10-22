@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GeodeForge — Geometry Dash mods made with AI</title>
+<meta name="description" content="An app for making Geode mods for Geometry Dash with AI. Describe it in words — the AI writes the code and builds the .geode itself.">
+<meta property="og:title" content="GeodeForge — Geometry Dash mods with AI">
+<meta property="og:description" content="Describe what the mod should do — the AI writes the code, draws a mockup and builds the .geode.">
+<meta property="og:image" content="assets/shot-code.webp">
+<link rel="icon" type="image/png" href="assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="alternate" hreflang="ru" href="./">
+<link rel="manifest" href="manifest.webmanifest">
+</head>
+<body>
+<canvas id="lines"></canvas>
+<div class="sale-bar" id="sale-bar" hidden></div>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#">
+      <img src="assets/icon.png" alt="" width="26" height="26" style="border-radius:6px">
+      GeodeForge
+    </a>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#buy">Pricing</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#faq">FAQ</a>
+      <a href="./" class="lang">RU</a>
+    </nav>
+    <a class="btn sm primary" href="#buy">Buy</a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <div class="badge"><i></i> Geode 5 · Geometry Dash 2.2081 · Windows</div>
+    <h1>Geometry Dash mods.<br><span class="typed" id="typed">Just with words.</span></h1>
+    <p class="lead">Describe what the mod should do — the AI writes the code, draws a mockup and builds a ready <span class="mono">.geode</span> by itself. No programming, no SDK to install.</p>
+    <div class="cta">
+      <a class="btn primary" href="#buy">Buy from 299 ₽</a>
+      <a class="btn" href="#how">How it works</a>
+    </div>
+    <div class="hero-shot"><img id="shot" src="assets/shot-code.webp" alt="GeodeForge window: AI chat on the left, code appears in real time on the right" width="1456" height="771"></div>
+    <div class="shot-tabs">
+      <button class="on" data-src="assets/shot-code.webp">Live code</button>
+      <button data-src="assets/shot-design.webp">AI mockups</button>
+      <button data-src="assets/shot-files.webp">File editor</button>
+    </div>
+  </div>
+
+  <section id="features">
+    <div class="wrap">
+      <div class="kicker">Features</div>
+      <h2>Everything for your mod — in one window</h2>
+      <p class="sub">AI chat on the left, a big workspace on the right: code, design, hints, files and builds.</p>
+      <div class="grid">
+        <div class="card"><div class="ico">✦</div><h3>AI built in</h3><p>The built-in GeodeForge AI works right away — no keys or VPN. Or connect your own: Claude, ChatGPT, Grok, Gemini, DeepSeek, free models.</p></div>
+        <div class="card"><div class="ico">⌁</div><h3>Live code</h3><p>Lines appear in real time as the AI writes the mod. You see everything and can edit by hand.</p></div>
+        <div class="card"><div class="ico">☁</div><h3>Cloud builds</h3><p>The .geode is built on a server and installed into the game automatically. No Geode SDK, CMake or Visual Studio needed.</p></div>
+        <div class="card"><div class="ico">⟲</div><h3>AI fixes its own errors</h3><p>If a build fails, the AI reads the errors, fixes the code and rebuilds. Up to three attempts in a row.</p></div>
+        <div class="card"><div class="ico">◫</div><h3>UI mockups</h3><p>The AI draws how the mod’s windows and buttons will look — before the build.</p></div>
+        <div class="card"><div class="ico">↺</div><h3>History and undo</h3><p>See exactly what the AI changed. Any change can be undone with one click.</p></div>
+        <div class="card"><div class="ico">⌘</div><h3>Knows the game inside out</h3><p>The AI sees the real Geometry Dash functions from Geode bindings — less made-up code and fewer errors.</p></div>
+        <div class="card"><div class="ico">▣</div><h3>Screenshot instead of words</h3><p>Show the AI a picture — a menu, an error or a mod you like — and it understands what to do.</p></div>
+        <div class="card"><div class="ico">⚠</div><h3>Crash analysis</h3><p>Game crashed? The app finds the crash log and the AI explains the cause and fixes the mod.</p></div>
+        <div class="card"><div class="ico">▤</div><h3>Windows + Android</h3><p>In Pro, one .geode file is built for PC and phone at once.</p></div>
+        <div class="card"><div class="ico">⇪</div><h3>Updates itself</h3><p>New versions install with one click right inside the app — no reinstall, no signing in again.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap split">
+      <div>
+        <div class="kicker">How it works</div>
+        <h2>From idea to mod — in minutes</h2>
+        <div class="steps" style="grid-template-columns:1fr 1fr;margin-top:30px">
+          <div class="step"><h3>Describe the mod</h3><p>“Make an FPS counter in the corner of the screen”.</p></div>
+          <div class="step"><h3>AI writes the code</h3><p>Files appear on the right, line by line.</p></div>
+          <div class="step"><h3>Builds itself</h3><p>The server builds the .geode, the AI fixes errors.</p></div>
+          <div class="step"><h3>Play</h3><p>The mod is already in the game folder. Restart GD.</p></div>
+        </div>
+      </div>
+      <div class="chat">
+        <div class="bubble">Make a mod that shows FPS in the corner of the screen</div>
+        <div class="bot">On it! We hook <span class="mono">PlayLayer</span> and update the label every half second.</div>
+        <div class="chip">📄 <b>src/main.cpp</b><span style="margin-left:auto">35 lines</span></div>
+        <div class="code" id="code"></div>
+        <div class="chip">✔ <b>Done: fps-counter.geode</b><span style="margin-left:auto">installed to GD</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="buy">
+    <div class="wrap">
+      <div style="text-align:center">
+        <div class="kicker">Pricing</div>
+        <h2>One payment — forever</h2>
+        <p class="sub" style="margin:0 auto 18px">The key arrives by email right after payment. No subscriptions.</p>
+        <p class="trial-note">🆓 Try first: <a href="#download">3 days of all features for free</a> — right in the app, no key.</p>
+      </div>
+      <div class="prices">
+        <div class="price">
+          <h3>Basic</h3>
+          <div class="amount" id="amt-basic">299 <span>₽</span></div>
+          <div class="dim">To try it out and make your first mods</div>
+          <ul>
+            <li>Built-in AI — 100 requests a month</li>
+            <li>Any AI of your own, unlimited</li>
+            <li>Live code and mockups</li>
+            <li>Cloud builds — 10 a day</li>
+            <li>Up to 3 mods at a time</li>
+            <li>3 starter templates</li>
+            <li class="no">AI fixes build errors itself</li>
+          </ul>
+          <button class="btn" data-plan="basic">Buy Basic</button>
+        </div>
+        <div class="price pro">
+          <h3>Pro</h3>
+          <div class="amount" id="amt-pro">499 <span>₽</span></div>
+          <div class="dim">All features, no limits</div>
+          <ul>
+            <li>Everything in Basic</li>
+            <li>Built-in AI — 400 requests a month</li>
+            <li>Unlimited mods</li>
+            <li>Builds for Windows and Android at once</li>
+            <li>Cloud builds — 40 a day</li>
+            <li>All templates: editor, HUD, settings…</li>
+            <li>AI fixes errors and rebuilds itself</li>
+            <li>All future updates</li>
+          </ul>
+          <button class="btn primary" data-plan="pro">Buy Pro</button>
+        </div>
+      </div>
+      <p class="upgrade-note">Already have Basic? <a href="#" data-plan="upgrade">Upgrade to Pro for <span id="amt-upgrade">200</span> ₽</a> · <a href="#" data-plan="pro" data-gift="1">🎁 Gift to a friend</a></p>
+    </div>
+  </section>
+
+  <section id="reviews" hidden>
+    <div class="wrap">
+      <div class="kicker">Reviews</div>
+      <h2>What people say <span id="rating"></span></h2>
+      <div class="reviews" id="reviews-list"></div>
+    </div>
+  </section>
+
+  <section id="gallery">
+    <div class="wrap">
+      <div class="kicker">Gallery</div>
+      <h2>Mods made with GeodeForge</h2>
+      <p class="sub">Made by users — with words, without programming. Download and install via Geode (Geode → “Install from file”).</p>
+      <div class="gallery" id="gallery-list"><div class="dim">Empty for now — be the first! In the app: Build → Publishing → “To gallery”.</div></div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap faq">
+      <div class="kicker">FAQ</div>
+      <h2>Frequently asked questions</h2>
+      <details><summary>Do I need to know how to code?</summary><p>No. Describe what you need — the AI writes the code. If something’s off, just tell it what to fix.</p></details>
+      <details><summary>Is the AI included?</summary><p>Yes: the built-in GeodeForge AI works right away, no keys or VPN (100 requests a month in Basic, 400 in Pro). You can also connect your own AI with no limits — there are free options (OpenRouter, Groq, a local model via Ollama). For the hardest mods Claude is the best.</p></details>
+      <details><summary>Can I try it first?</summary><p>Yes. Download the app and click “Try 3 days for free” — all Pro features, no key or payment. Once per computer. Later just enter a purchased key — your mods and settings stay.</p></details>
+      <details><summary>Windows says “Windows protected your PC”</summary><p>It’s a normal warning for apps without a paid digital signature. Click “More info” → “Run anyway”. The installer is downloaded only from this site (GitHub).</p></details>
+      <details><summary>Have a promo code?</summary><p>Enter it in the “Promo code” field when buying. Friends of GeodeForge users get 10% off with their referral code.</p></details>
+      <details><summary>How do I get the key?</summary><p>Right after payment the key is shown on screen and sent by email. In the app click “Activate”, enter your email, a password and the key.</p></details>
+      <details><summary>Can I use it on two computers?</summary><p>The account works on one device at a time. When you sign in on a new PC, you get an email or Telegram message with a “Confirm sign-in” button, and the old PC signs out.</p></details>
+      <details><summary>What do I need?</summary><p>Windows 10/11 and internet. Nothing to install for building mods — it runs in the cloud.</p></details>
+      <details><summary>What if the key didn’t arrive?</summary><p>Check Spam. If it’s not there — message us with the email you used for the purchase.</p></details>
+    </div>
+  </section>
+
+  <section id="download" style="padding-top:0">
+    <div class="wrap" style="text-align:center">
+      <h2>Download GeodeForge</h2>
+      <p class="sub" style="margin:0 auto 26px">Bought it — activate your key. Not yet — click “Try 3 days for free” in the app.</p>
+      <a class="btn primary" id="dl" href="#">Download for Windows</a>
+      <p class="dim" style="margin-top:18px">📱 Already have a key? <a href="m.html">Mobile version</a> — see your builds and download mods to your phone.</p>
+      <div class="smartscreen">
+        <b>Windows shows a blue “Windows protected your PC” window?</b><br>
+        That’s normal for apps without a paid signature. Click <span class="kbd">More info</span> → <span class="kbd">Run anyway</span>.
+        The app updates itself — you won’t see this window again.
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© GeodeForge</span>
+    <span class="mute">Not affiliated with RobTop Games or the Geode team.</span>
+    <span style="margin-left:auto" id="tg"></span>
+  </div>
+</footer>
+
+<div class="modal-bg" id="modal">
+  <form class="modal" id="buyform">
+    <button type="button" class="x" aria-label="Close">×</button>
+    <h3 id="m-title">Purchase</h3>
+    <div class="dim" id="m-sub" style="font-size:14px"></div>
+    <label class="l" for="email" id="m-email-label">Email — the key will be sent here</label>
+    <input class="input" id="email" type="email" required placeholder="you@gmail.com" autocomplete="email">
+    <label class="l" for="promo">Promo code <span class="dim">(if any)</span></label>
+    <input class="input mono" id="promo" placeholder="GD20" autocomplete="off" style="text-transform:uppercase">
+    <div class="promo-msg" id="promo-msg"></div>
+    <label class="check-row"><input type="checkbox" id="gift"> 🎁 It’s a gift — send the key to a friend</label>
+    <div id="gift-fields" hidden>
+      <label class="l" for="gift-to">Friend’s email</label>
+      <input class="input" id="gift-to" type="email" placeholder="friend@mail.ru">
+      <label class="l" for="gift-from">From (your name)</label>
+      <input class="input" id="gift-from" maxlength="60" placeholder="Alex">
+      <label class="l" for="gift-msg">Message (optional)</label>
+      <input class="input" id="gift-msg" maxlength="300" placeholder="Happy birthday!">
+    </div>
+    <label class="l">Payment method</label>
+    <div class="seg">
+      <button type="button" class="on" data-method="card">💳 Card</button>
+      <button type="button" data-method="wallet">YooMoney</button>
+    </div>
+    <div class="total"><span class="dim">Total</span><b id="m-sum">—</b></div>
+    <button class="btn primary" style="width:100%" id="paybtn">Go to payment</button>
+    <div class="err" id="m-err"></div>
+    <div class="fine">Payment via YooMoney (Russian cards and wallets). After payment you’ll come back here and see your key.</div>
+  </form>
+</div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
