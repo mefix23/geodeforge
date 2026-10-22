@@ -56,6 +56,19 @@
           document.getElementById("d-title").textContent = "Подарок отправлен 🎁";
           document.getElementById("d-sub").textContent = "Ключ ушёл на " + j.gift_to + ". На всякий случай он есть и здесь:";
         }
+        const noKey = (title, sub) => {
+          document.getElementById("d-title").textContent = title;
+          document.getElementById("d-sub").textContent = sub;
+          document.getElementById("key").style.display = "none";
+          document.getElementById("copy").style.display = "none";
+        };
+        if (j.plan === "mod") {
+          noKey("Мод твой 🧩", "Ссылка на скачивание также отправлена на " + j.email + ".");
+          if (j.download) { const a = document.getElementById("dl"); a.href = j.download; a.textContent = "Скачать мод (.geode)"; }
+          return;
+        }
+        if (j.plan === "sub") { noKey("Подписка Про включена ✨", "Перезапусти GeodeForge — все функции Про уже доступны."); return; }
+        if (j.ai_pack) { noKey("Запросы добавлены ⚡", "+" + j.ai_pack + " запросов GeodeForge AI уже на твоём аккаунте. Они не сгорают."); return; }
         if (j.plan === "upgrade") {
           document.getElementById("d-title").textContent = "Версия Про включена ✨";
           document.getElementById("d-sub").textContent = "Перезапусти GeodeForge — все функции Про уже доступны.";
