@@ -129,20 +129,62 @@ class $modify(FPSLayer, PlayLayer) {
     }
   }).catch(() => {});
 
-  // ---------- Галерея модов ----------
-  fetch(GF.api + "/gallery", { headers: H }).then((r) => r.json()).then((g) => {
-    if (!g.items || !g.items.length) return;
-    $("#gallery-list").innerHTML = g.items.map((m) => `
+  // ---------- Галерея модов: лучшие / неделя / новые, лайки, конкурс ----------
+  let gSort = "top";
+  let liked = [];
+  const post = (body) => fetch(GF.api + "/gallery", { method: "POST", headers: { ...H, "Content-Type": "application/json" }, body: JSON.stringify({ site: true, ...body }) }).then((r) => r.json());
+  function loadGallery() {
+    post({ action: "list", sort: gSort }).then((g) => {
+      liked = g.liked || [];
+      const c = g.contest;
+      const cb = $("#contest");
+      if (c && cb) {
+        const left = new Date(c.ends_at) - Date.now();
+        cb.hidden = false;
+        cb.innerHTML = c.active
+          ? `<b>🏆 ${esc(c.title)}</b><div>${T("Тема", "Theme")}: <b>${esc(c.theme)}</b>${c.prize ? ` · ${T("приз", "prize")}: ${esc(c.prize)}` : ""} · ${T("осталось", "left")} ${Math.max(0, Math.floor(left / 86400000))} ${T("дн.", "d")} ${Math.max(0, Math.floor((left % 86400000) / 3600000))} ${T("ч", "h")}</div><div class="dim" style="font-size:13px">${T("Сделай мод в GeodeForge и выложи в галерею с галочкой «Участвует в конкурсе». Побеждает мод с наибольшим числом ❤️ — голосуй ниже!", "Make a mod in GeodeForge and post it to the gallery with “Takes part in the contest”. The mod with the most ❤️ wins — vote below!")}</div>`
+          : c.winner ? `<b>🏆 ${esc(c.title)}</b><div>${T("Победитель", "Winner")}: <b>${esc(c.winner.title)}</b> — ${esc(c.winner.author)}</div>` : "";
+        if (!cb.innerHTML) cb.hidden = true;
+      }
+      if (!g.items || !g.items.length) {
+        $("#gallery-list").innerHTML = `<div class="dim">${T("Пока пусто — стань первым! В программе: Сборка → Публикация → «В галерею».", "Empty for now — be the first! In the app: Build → Publishing → “To gallery”.")}</div>`;
+        return;
+      }
+      $("#gallery-list").innerHTML = g.items.map((m, i) => `
       <div class="gcard">
-        <div class="img" style="${m.image ? `background-image:url('${esc(m.image)}')` : ""}">${m.image ? "" : "◆"}</div>
+        <div class="img" style="${m.image ? `background-image:url('${esc(m.image)}')` : ""}">${m.image ? "" : "◆"}${gSort !== "new" && i < 3 ? `<span class="rank">#${i + 1}</span>` : ""}</div>
         <div class="body">
           <b>${esc(m.title)}</b>
           <p>${esc(m.description)}</p>
           <div class="meta">${esc(m.author)} · ${T("скачан", "downloads")} ${m.downloads}</div>
-          <a class="btn sm" href="${GF.api}/gallery?download=${m.id}" onclick="setTimeout(()=>location.reload(),1500)">${T("Скачать .geode", "Download .geode")}</a>
+          <div class="gacts">
+            <button class="btn sm like${liked.includes(m.id) ? " on" : ""}" data-id="${m.id}">❤ <span>${m.likes || 0}</span></button>
+            <a class="btn sm" href="${GF.api}/gallery?download=${m.id}">${T("Скачать .geode", "Download .geode")}</a>
+          </div>
         </div>
       </div>`).join("");
-  }).catch(() => {});
+    }).catch(() => {});
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest(".like");
+    if (b) {
+      const id = b.dataset.id;
+      const on = !liked.includes(id);
+      post({ action: "like", id, on }).then((r) => {
+        if (r.error) return;
+        liked = on ? [...liked, id] : liked.filter((x) => x !== id);
+        b.classList.toggle("on", on);
+        b.querySelector("span").textContent = r.likes;
+      });
+    }
+    const t = e.target.closest && e.target.closest("[data-gsort]");
+    if (t) {
+      gSort = t.dataset.gsort;
+      document.querySelectorAll("[data-gsort]").forEach((x) => x.classList.toggle("on", x === t));
+      loadGallery();
+    }
+  });
+  loadGallery();
 
   // ---------- Покупка ----------
   const modal = $("#modal");
