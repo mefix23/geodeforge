@@ -52,6 +52,10 @@
       if (j.status === "paid") {
         document.getElementById("wait").style.display = "none";
         document.getElementById("done").style.display = "";
+        if (j.gift_to) {
+          document.getElementById("d-title").textContent = "Подарок отправлен 🎁";
+          document.getElementById("d-sub").textContent = "Ключ ушёл на " + j.gift_to + ". На всякий случай он есть и здесь:";
+        }
         if (j.plan === "upgrade") {
           document.getElementById("d-title").textContent = "Версия Про включена ✨";
           document.getElementById("d-sub").textContent = "Перезапусти GeodeForge — все функции Про уже доступны.";
