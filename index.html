@@ -8,25 +8,30 @@
 <meta property="og:title" content="GeodeForge — моды для Geometry Dash с ИИ">
 <meta property="og:description" content="Пишешь словами, что должен делать мод — ИИ пишет код, рисует макет и сам собирает .geode.">
 <meta property="og:image" content="assets/shot-code.webp">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%23000'/%3E%3Crect x='6' y='6' width='28' height='28' rx='4' fill='none' stroke='%23fff' stroke-width='2'/%3E%3Cpath d='M20 14v12M14 20h12' stroke='%23fff' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="assets/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="alternate" hreflang="en" href="en.html">
+<link rel="manifest" href="manifest.webmanifest">
 </head>
 <body>
 <canvas id="lines"></canvas>
+<div class="sale-bar" id="sale-bar" hidden></div>
 
 <header>
   <div class="wrap nav">
     <a class="brand" href="#">
-      <svg viewBox="0 0 40 40" fill="none"><rect x="4.5" y="4.5" width="31" height="31" rx="5" stroke="#fff" stroke-width="1.6"/><rect x="11" y="11" width="18" height="18" rx="2" stroke="#fff" stroke-width="1.6"/><path d="M20 15v10M15 20h10" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <img src="assets/icon.png" alt="" width="26" height="26" style="border-radius:6px">
       GeodeForge
     </a>
     <nav>
       <a href="#features">Возможности</a>
       <a href="#how">Как работает</a>
       <a href="#buy">Цены</a>
+      <a href="#gallery">Галерея</a>
       <a href="#faq">Вопросы</a>
+      <a href="en.html" class="lang">EN</a>
     </nav>
     <a class="btn sm primary" href="#buy">Купить</a>
   </div>
@@ -55,12 +60,17 @@
       <h2>Всё для мода — в одном окне</h2>
       <p class="sub">Слева чат с ИИ, справа большая рабочая область: код, дизайн, подсказки, файлы и сборка.</p>
       <div class="grid">
-        <div class="card"><div class="ico">✦</div><h3>Любой ИИ на выбор</h3><p>Claude, ChatGPT, Grok, Gemini, DeepSeek и сотни моделей через OpenRouter. Есть бесплатные и даже локальная ИИ без интернета.</p></div>
+        <div class="card"><div class="ico">✦</div><h3>ИИ уже внутри</h3><p>Встроенный GeodeForge AI работает сразу — без ключей и VPN. А можно подключить свой: Claude, ChatGPT, Grok, Gemini, DeepSeek, бесплатные модели.</p></div>
         <div class="card"><div class="ico">⌁</div><h3>Живой код</h3><p>Строки появляются в реальном времени, пока ИИ пишет мод. Всё видно и можно поправить руками.</p></div>
         <div class="card"><div class="ico">☁</div><h3>Сборка в облаке</h3><p>Готовый .geode собирается на сервере и сам ставится в игру. Не нужны Geode SDK, CMake и Visual Studio.</p></div>
         <div class="card"><div class="ico">⟲</div><h3>ИИ чинит ошибки сам</h3><p>Если сборка упала — ИИ читает ошибки, исправляет код и пересобирает. До трёх попыток подряд.</p></div>
         <div class="card"><div class="ico">◫</div><h3>Макеты интерфейса</h3><p>ИИ рисует, как будут выглядеть окна и кнопки мода, ещё до сборки.</p></div>
-        <div class="card"><div class="ico">↺</div><h3>История и откат</h3><p>Любое изменение от ИИ можно отменить одной кнопкой. Ничего не потеряется.</p></div>
+        <div class="card"><div class="ico">↺</div><h3>История и откат</h3><p>Перед записью видно, что именно поменял ИИ. Любое изменение отменяется одной кнопкой.</p></div>
+        <div class="card"><div class="ico">⌘</div><h3>Знает игру изнутри</h3><p>ИИ видит настоящие функции Geometry Dash из биндингов Geode — меньше выдуманного кода и ошибок.</p></div>
+        <div class="card"><div class="ico">▣</div><h3>Скриншот вместо слов</h3><p>Покажи ИИ картинку — меню, ошибку или мод, который понравился, — и он поймёт, что сделать.</p></div>
+        <div class="card"><div class="ico">⚠</div><h3>Разбор вылетов</h3><p>Игра вылетела? Программа найдёт лог вылета, а ИИ объяснит причину и починит мод.</p></div>
+        <div class="card"><div class="ico">▤</div><h3>Windows + Android</h3><p>В версии Про один файл .geode собирается сразу для ПК и телефона.</p></div>
+        <div class="card"><div class="ico">⇪</div><h3>Обновляется сама</h3><p>Новые версии ставятся одной кнопкой прямо из программы — без переустановки и повторного входа.</p></div>
       </div>
     </div>
   </section>
@@ -92,30 +102,34 @@
       <div style="text-align:center">
         <div class="kicker">Цены</div>
         <h2>Один платёж — навсегда</h2>
-        <p class="sub" style="margin:0 auto 50px">Ключ приходит на почту сразу после оплаты. Никаких подписок.</p>
+        <p class="sub" style="margin:0 auto 18px">Ключ приходит на почту сразу после оплаты. Никаких подписок.</p>
+        <p class="trial-note">🆓 Сначала попробуй: <a href="#download">3 дня всех функций бесплатно</a> — прямо в программе, без ключа.</p>
       </div>
       <div class="prices">
         <div class="price">
           <h3>Базовая</h3>
-          <div class="amount">299 <span>₽</span></div>
+          <div class="amount" id="amt-basic">299 <span>₽</span></div>
           <div class="dim">Чтобы попробовать и сделать первые моды</div>
           <ul>
-            <li>Чат с любым ИИ</li>
+            <li>Встроенный ИИ — 100 запросов в месяц</li>
+            <li>Любой свой ИИ без ограничений</li>
             <li>Живой код и макеты</li>
             <li>Облачная сборка — 10 в день</li>
             <li>До 3 модов одновременно</li>
-            <li>2 шаблона для старта</li>
+            <li>3 шаблона для старта</li>
             <li class="no">ИИ сам чинит ошибки сборки</li>
           </ul>
           <button class="btn" data-plan="basic">Купить Базовую</button>
         </div>
         <div class="price pro">
           <h3>Про</h3>
-          <div class="amount">499 <span>₽</span></div>
+          <div class="amount" id="amt-pro">499 <span>₽</span></div>
           <div class="dim">Все функции без ограничений</div>
           <ul>
             <li>Всё из Базовой</li>
+            <li>Встроенный ИИ — 400 запросов в месяц</li>
             <li>Безлимит модов</li>
+            <li>Сборка сразу для Windows и Android</li>
             <li>Облачная сборка — 40 в день</li>
             <li>Все шаблоны: редактор, HUD, настройки…</li>
             <li>ИИ сам чинит ошибки и пересобирает</li>
@@ -124,7 +138,24 @@
           <button class="btn primary" data-plan="pro">Купить Про</button>
         </div>
       </div>
-      <p class="upgrade-note">Уже есть Базовая? <a href="#" data-plan="upgrade">Перейти на Про за 200 ₽</a></p>
+      <p class="upgrade-note">Уже есть Базовая? <a href="#" data-plan="upgrade">Перейти на Про за <span id="amt-upgrade">200</span> ₽</a> · <a href="#" data-plan="pro" data-gift="1">🎁 Подарить другу</a></p>
+    </div>
+  </section>
+
+  <section id="reviews" hidden>
+    <div class="wrap">
+      <div class="kicker">Отзывы</div>
+      <h2>Что говорят <span id="rating"></span></h2>
+      <div class="reviews" id="reviews-list"></div>
+    </div>
+  </section>
+
+  <section id="gallery">
+    <div class="wrap">
+      <div class="kicker">Галерея</div>
+      <h2>Моды, сделанные в GeodeForge</h2>
+      <p class="sub">Их сделали пользователи — словами, без программирования. Скачай и поставь через Geode (Geode → кнопка «Установить из файла»).</p>
+      <div class="gallery" id="gallery-list"><div class="dim">Пока пусто — стань первым! В программе: Сборка → Публикация → «В галерею».</div></div>
     </div>
   </section>
 
@@ -133,7 +164,10 @@
       <div class="kicker">Вопросы</div>
       <h2>Частые вопросы</h2>
       <details><summary>Нужно ли уметь программировать?</summary><p>Нет. Пишешь словами, что нужно, — ИИ делает код. Если что-то не так, просто скажи ему, что исправить.</p></details>
-      <details><summary>ИИ входит в цену?</summary><p>Ты подключаешь свой ключ ИИ. Есть бесплатные варианты: Gemini, бесплатные модели OpenRouter и Groq, или локальная модель через Ollama. Для самых сложных модов лучше всего Claude — оплачивается отдельно на сайте Anthropic.</p></details>
+      <details><summary>ИИ входит в цену?</summary><p>Да: встроенный GeodeForge AI работает сразу, без ключей и VPN (100 запросов в месяц в Базовой, 400 в Про). Можно подключить и свой ИИ без лимитов — есть бесплатные варианты (OpenRouter, Groq, локальная модель через Ollama). Для самых сложных модов лучше всего Claude.</p></details>
+      <details><summary>Можно сначала попробовать?</summary><p>Да. Скачай программу и нажми «Попробовать 3 дня бесплатно» — все функции Про, без ключа и оплаты. Один раз на компьютер. Потом просто введи купленный ключ — моды и настройки останутся.</p></details>
+      <details><summary>Windows пишет «Система Windows защитила ваш компьютер»</summary><p>Это обычное предупреждение для программ без платной цифровой подписи. Нажми «Подробнее» → «Выполнить в любом случае». Установщик скачивается только с этого сайта (GitHub).</p></details>
+      <details><summary>Есть промокод?</summary><p>Введи его при покупке в поле «Промокод». Друзья пользователей GeodeForge получают скидку 10% по их реферальному коду.</p></details>
       <details><summary>Как я получу ключ?</summary><p>Сразу после оплаты ключ покажется на экране и придёт на почту. В программе нажми «Активировать», введи почту, пароль и ключ.</p></details>
       <details><summary>Можно поставить на два компьютера?</summary><p>Аккаунт работает на одном устройстве за раз. При входе с нового ПК придёт письмо или сообщение в Telegram с кнопкой «Подтвердить вход», а старый ПК выйдет из аккаунта.</p></details>
       <details><summary>Что нужно для работы?</summary><p>Windows 10/11 и интернет. Для сборки модов ничего ставить не нужно — она идёт в облаке.</p></details>
@@ -143,9 +177,15 @@
 
   <section id="download" style="padding-top:0">
     <div class="wrap" style="text-align:center">
-      <h2>Уже купил?</h2>
-      <p class="sub" style="margin:0 auto 26px">Скачай программу и активируй ключ.</p>
-      <a class="btn primary" id="dl" href="#">Скачать GeodeForge для Windows</a>
+      <h2>Скачать GeodeForge</h2>
+      <p class="sub" style="margin:0 auto 26px">Купил — активируй ключ. Ещё нет — нажми в программе «Попробовать 3 дня бесплатно».</p>
+      <a class="btn primary" id="dl" href="#">Скачать для Windows</a>
+      <p class="dim" style="margin-top:18px">📱 Уже есть ключ? <a href="m.html">Мобильная версия</a> — смотри сборки и скачивай моды на телефон.</p>
+      <div class="smartscreen">
+        <b>Windows показывает синее окно «Система Windows защитила ваш компьютер»?</b><br>
+        Это нормально для программ без платной подписи. Нажми <span class="kbd">Подробнее</span> → <span class="kbd">Выполнить в любом случае</span>.
+        Программа обновляется сама — это окно больше не появится.
+      </div>
     </div>
   </section>
 </main>
@@ -165,6 +205,18 @@
     <div class="dim" id="m-sub" style="font-size:14px"></div>
     <label class="l" for="email" id="m-email-label">Почта — сюда придёт ключ</label>
     <input class="input" id="email" type="email" required placeholder="you@gmail.com" autocomplete="email">
+    <label class="l" for="promo">Промокод <span class="dim">(если есть)</span></label>
+    <input class="input mono" id="promo" placeholder="GD20" autocomplete="off" style="text-transform:uppercase">
+    <div class="promo-msg" id="promo-msg"></div>
+    <label class="check-row"><input type="checkbox" id="gift"> 🎁 Это подарок — отправить ключ другу</label>
+    <div id="gift-fields" hidden>
+      <label class="l" for="gift-to">Почта друга</label>
+      <input class="input" id="gift-to" type="email" placeholder="friend@mail.ru">
+      <label class="l" for="gift-from">От кого (твоё имя)</label>
+      <input class="input" id="gift-from" maxlength="60" placeholder="Миша">
+      <label class="l" for="gift-msg">Пожелание (необязательно)</label>
+      <input class="input" id="gift-msg" maxlength="300" placeholder="С днём рождения!">
+    </div>
     <label class="l">Способ оплаты</label>
     <div class="seg">
       <button type="button" class="on" data-method="card">💳 Картой</button>
