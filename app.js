@@ -111,6 +111,7 @@ class $modify(FPSLayer, PlayLayer) {
     amt("basic", info.prices.basic);
     amt("pro", info.prices.pro);
     if ($("#amt-upgrade")) $("#amt-upgrade").textContent = info.prices.upgrade;
+    if ($("#amt-sub") && info.prices.sub) $("#amt-sub").textContent = info.prices.sub;
     if (sale) {
       const bar = $("#sale-bar");
       const till = new Date(sale.ends_at).toLocaleDateString(EN ? "en-GB" : "ru-RU", { timeZone: "Europe/Moscow", day: "numeric", month: "long" });
@@ -128,6 +129,11 @@ class $modify(FPSLayer, PlayLayer) {
         </div>`).join("");
     }
   }).catch(() => {});
+
+  // Значки авторов (за моды, лайки, победы, продажи)
+  const BADGE = { mods1: ["🧩", "Первый мод", "First mod"], mods5: ["🛠", "5 модов", "5 mods"], mods10: ["🏗", "10 модов", "10 mods"], likes10: ["❤️", "10 лайков", "10 likes"], likes100: ["🔥", "100 лайков", "100 likes"], winner: ["🏆", "Победитель конкурса", "Contest winner"], seller: ["💰", "Продаёт моды", "Sells mods"] };
+  const badgeIcons = (list) => (list || []).filter((b) => BADGE[b]).map((b) => ` <span title="${T(BADGE[b][1], BADGE[b][2])}">${BADGE[b][0]}</span>`).join("");
+  window.gfBadges = { BADGE, badgeIcons };
 
   // ---------- Галерея модов: лучшие / неделя / новые, лайки, конкурс ----------
   let gSort = "top";
@@ -156,16 +162,36 @@ class $modify(FPSLayer, PlayLayer) {
         <div class="body">
           <b>${esc(m.title)}</b>
           <p>${esc(m.description)}</p>
-          <div class="meta">${esc(m.author)} · ${T("скачан", "downloads")} ${m.downloads}</div>
+          <div class="meta"><a href="author.html?id=${m.id}${EN ? "&en=1" : ""}">${esc(m.author)}</a>${badgeIcons(m.author_badges)} · ${T("скачан", "downloads")} ${m.downloads}</div>
           <div class="gacts">
             <button class="btn sm like${liked.includes(m.id) ? " on" : ""}" data-id="${m.id}">❤ <span>${m.likes || 0}</span></button>
-            <a class="btn sm" href="${GF.api}/gallery?download=${m.id}">${T("Скачать .geode", "Download .geode")}</a>
+            <button class="btn sm ghost cm" data-id="${m.id}">💬 ${m.comments || 0}</button>
+            ${m.price > 0
+              ? `<button class="btn sm primary buymod" data-id="${m.id}" data-title="${esc(m.title)}" data-price="${m.price}">${T("Купить", "Buy")} ${m.price} ₽</button>`
+              : `<a class="btn sm" href="${GF.api}/gallery?download=${m.id}">${T("Скачать .geode", "Download .geode")}</a>`}
           </div>
+          <div class="cms" id="cms-${m.id}" hidden></div>
         </div>
       </div>`).join("");
     }).catch(() => {});
   }
   document.addEventListener("click", (e) => {
+    const bm = e.target.closest && e.target.closest(".buymod");
+    if (bm) return window.gfBuyMod && window.gfBuyMod({ id: bm.dataset.id, title: bm.dataset.title, price: Number(bm.dataset.price) });
+    const cm = e.target.closest && e.target.closest(".cm");
+    if (cm) {
+      const box = $("#cms-" + cm.dataset.id);
+      box.hidden = !box.hidden;
+      if (!box.hidden) {
+        box.innerHTML = `<div class="dim">${T("Загружаю…", "Loading…")}</div>`;
+        post({ action: "comments", id: cm.dataset.id }).then((r) => {
+          box.innerHTML = (r.items || []).length
+            ? r.items.map((c) => `<div class="cmt"><b>${esc(c.name)}</b> <span class="dim">${new Date(c.created_at).toLocaleDateString(EN ? "en" : "ru")}</span><div>${esc(c.text)}</div></div>`).join("")
+            : `<div class="dim">${T("Комментариев пока нет. Написать можно из программы GeodeForge.", "No comments yet. You can comment from the GeodeForge app.")}</div>`;
+        });
+      }
+      return;
+    }
     const b = e.target.closest && e.target.closest(".like");
     if (b) {
       const id = b.dataset.id;
@@ -188,7 +214,7 @@ class $modify(FPSLayer, PlayLayer) {
 
   // ---------- Покупка ----------
   const modal = $("#modal");
-  let plan = "pro", method = "card", promoOk = "";
+  let plan = "pro", method = "card", promoOk = "", galleryId = "";
   // Промокод из ссылки: ?promo=КОД
   const qp = new URLSearchParams(location.search);
   if (qp.get("promo")) $("#promo").value = qp.get("promo").toUpperCase();
@@ -211,24 +237,29 @@ class $modify(FPSLayer, PlayLayer) {
     }
   };
   let qt; $("#promo").addEventListener("input", () => { clearTimeout(qt); qt = setTimeout(quote, 500); });
-  const names = EN ? { basic: "GeodeForge Basic", pro: "GeodeForge Pro", upgrade: "Upgrade to Pro" } : { basic: "GeodeForge Базовая", pro: "GeodeForge Про", upgrade: "Переход на Про" };
-  const open = (p, email, gift) => {
+  const names = EN ? { basic: "GeodeForge Basic", pro: "GeodeForge Pro", upgrade: "Upgrade to Pro", sub: "Pro for a month" } : { basic: "GeodeForge Базовая", pro: "GeodeForge Про", upgrade: "Переход на Про", sub: "Про на месяц" };
+  const open = (p, email, gift, mod) => {
     plan = p;
+    galleryId = mod ? mod.id : "";
+    if (mod) { names.mod = (EN ? "Mod: " : "Мод: ") + mod.title; GF.prices.mod = mod.price; }
+    const account = p === "upgrade" || p === "sub";
+    $$(".promo-l", modal).forEach((x) => (x.hidden = p === "sub" || p === "mod"));
     track("buy_click");
     $("#gift").checked = !!gift;
     $("#gift-fields").hidden = !gift;
-    $("#gift").parentElement.hidden = p === "upgrade";
+    $("#gift").parentElement.hidden = p === "upgrade" || p === "sub" || p === "mod";
     $("#m-title").textContent = names[p];
-    $("#m-sub").textContent = p === "upgrade" ? T("Укажи почту, с которой входишь в GeodeForge — тариф поменяется сам.", "Enter the email you use in GeodeForge — the plan changes automatically.") : T("Ключ навсегда, без подписки.", "A lifetime key, no subscription.");
-    $("#m-email-label").textContent = p === "upgrade" ? T("Почта твоего аккаунта GeodeForge", "Your GeodeForge account email") : T("Почта — сюда придёт ключ", "Email — the key will be sent here");
+    $("#m-sub").textContent = p === "mod" ? T("Ссылка на скачивание придёт на почту и появится после оплаты.", "The download link will be emailed and shown after payment.") : p === "sub" ? T("Все функции Про на 30 дней. Укажи почту аккаунта GeodeForge (сначала заведи его — например, через пробный период).", "All Pro features for 30 days. Enter your GeodeForge account email (create one first, e.g. via the free trial).") : p === "upgrade" ? T("Укажи почту, с которой входишь в GeodeForge — тариф поменяется сам.", "Enter the email you use in GeodeForge — the plan changes automatically.") : T("Ключ навсегда, без подписки.", "A lifetime key, no subscription.");
+    $("#m-email-label").textContent = account ? T("Почта твоего аккаунта GeodeForge", "Your GeodeForge account email") : p === "mod" ? T("Почта — сюда придёт ссылка на мод", "Email — the mod link will be sent here") : T("Почта — сюда придёт ключ", "Email — the key will be sent here");
     $("#m-sum").textContent = GF.prices[p] + " ₽";
     $("#m-err").textContent = "";
     if (email) $("#email").value = email;
     modal.classList.add("open");
-    if ($("#promo").value.trim()) quote();
+    if ($("#promo").value.trim() && p !== "sub" && p !== "mod") quote();
     setTimeout(() => $("#email").focus(), 50);
   };
   $$("[data-plan]").forEach((b) => b.addEventListener("click", (e) => { e.preventDefault(); open(b.dataset.plan, null, !!b.dataset.gift); }));
+  window.gfBuyMod = (mod) => open("mod", null, false, mod);
   $("#gift").addEventListener("change", () => { $("#gift-fields").hidden = !$("#gift").checked; });
   $(".x", modal).addEventListener("click", () => modal.classList.remove("open"));
   modal.addEventListener("mousedown", (e) => { if (e.target === modal) modal.classList.remove("open"); });
@@ -246,7 +277,7 @@ class $modify(FPSLayer, PlayLayer) {
         method: "POST",
         headers: H,
         body: JSON.stringify({
-          email: $("#email").value, plan, method, promo: $("#promo").value.trim(),
+          email: $("#email").value, plan, method, promo: plan === "sub" || plan === "mod" ? "" : $("#promo").value.trim(), gallery_id: galleryId || undefined,
           ...($("#gift").checked ? { gift_to: $("#gift-to").value, gift_from: $("#gift-from").value, gift_msg: $("#gift-msg").value } : {}),
         }),
       });
