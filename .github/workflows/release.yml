@@ -1,0 +1,48 @@
+# Собирает установщик GeodeForge из частей (их загружает скрипт обновления) и кладёт в релиз.
+name: release
+run-name: release ${{ inputs.tag }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Версия, например v0.4.0"
+        required: true
+      parts:
+        description: "JSON-массив ссылок на части установщика"
+        required: true
+      sha256:
+        description: "Контрольная сумма целого файла"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Собираю установщик из частей
+        env:
+          PARTS: ${{ inputs.parts }}
+        run: |
+          echo "$PARTS" | jq -r '.[]' > parts.txt
+          : > GeodeForge-Setup.exe
+          i=0
+          while read -r url; do
+            curl -sS --fail -L "$url" -o "part$i"
+            cat "part$i" >> GeodeForge-Setup.exe
+            i=$((i+1))
+          done < parts.txt
+          sum=$(sha256sum GeodeForge-Setup.exe | cut -d' ' -f1)
+          echo "размер: $(stat -c%s GeodeForge-Setup.exe), sha256: $sum"
+          if [ "$sum" != "${{ inputs.sha256 }}" ]; then echo "Контрольная сумма не совпала"; exit 1; fi
+
+      - name: Загружаю в релиз
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          gh release view "$TAG" -R "${{ github.repository }}" > /dev/null 2>&1 || gh release create "$TAG" -R "${{ github.repository }}" --title "GeodeForge $TAG" --notes "Установщик GeodeForge для Windows."
+          gh release upload "$TAG" GeodeForge-Setup.exe -R "${{ github.repository }}" --clobber
+          gh release edit "$TAG" -R "${{ github.repository }}" --draft=false --latest
